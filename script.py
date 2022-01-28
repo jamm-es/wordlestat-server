@@ -4,7 +4,7 @@ import numpy as np
 import time
 
 
-headers = {'Authorization': 'Bearer ***REMOVED***'}
+headers = {'Authorization': 'Bearer XXX'}
 
 
 params = {
