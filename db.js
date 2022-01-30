@@ -23,7 +23,8 @@ mongoose
     let inProgress = false;
     let prevNewestId = '';
 
-    cron.schedule('*/10 * * * *', now => {      
+    cron.schedule('*/10 * * * *', now => {    
+      console.log(`Current time: ${now}`);
       if(inProgress) {
         console.log('!!!!! get_data.py already running, skipping this time... !!!!!');
         return;
