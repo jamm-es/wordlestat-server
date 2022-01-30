@@ -11,7 +11,7 @@ import json
 import sys
 
 with open('./twitter.key') as f:
-    bearer_token = f.read()
+    bearer_token = str(f.read()).strip()
 
 headers = {'Authorization': f'Bearer {bearer_token}'}
 
