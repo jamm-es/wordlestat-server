@@ -1,2 +1,5 @@
 node_modules
 twitter.key
+writer-credentials.json
+reader-credentials.json
+.vscode
