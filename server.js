@@ -24,7 +24,7 @@ mongoose
     app.disable('x-powered-by');
     app.use(helmet());
 
-    app.get('/:wordleNumber', (req, res) => {
+    app.get('/wordle-data/:wordleNumber', (req, res) => {
       WordleData
         .findOne({ wordleNumber: req.params.wordleNumber })
         .select('-_id -__v')
