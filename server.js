@@ -24,7 +24,7 @@ mongoose
 
     app.disable('x-powered-by');
     app.use(helmet());
-    app.use(cors({ origin: [/wordlestat\.com$/, /localhost$/] }))
+    app.use(cors({ origin: [/wordlestat\.com$/, /localhost:[0-9]+$/] }))
 
     app.get('/wordle-data/:wordleNumber', (req, res) => {
       WordleData
