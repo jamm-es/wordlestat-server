@@ -8,6 +8,7 @@ const mongoose = require('mongoose');
 const helmet = require('helmet');
 const WordleData = require('./models/WordleData');
 const RawData = require('./models/RawData');
+const cors = require('cors');
 
 const credentials = require('./reader-credentials.json');
 
@@ -23,6 +24,7 @@ mongoose
 
     app.disable('x-powered-by');
     app.use(helmet());
+    app.use(cors({ origin: [/wordlestat\.com$/, /localhost$/] }))
 
     app.get('/wordle-data/:wordleNumber', (req, res) => {
       WordleData
