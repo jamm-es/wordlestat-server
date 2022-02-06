@@ -6,9 +6,9 @@ endpoint, using the database to return results
 const express = require('express');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
-const WordleData = require('./models/WordleData');
-const RawData = require('./models/RawData');
 const cors = require('cors');
+const WordleData = require('./models/WordleData');
+const TotalData = require('./models/TotalData');
 
 const credentials = require('./reader-credentials.json');
 
@@ -43,6 +43,28 @@ mongoose
           return res.status(200).json(wordleData);
         });
     });
+
+    app.get('/total-data', (req, res) => {
+      TotalData
+        .findOne()
+        .select('-_id -__v')
+        .lean()
+        .exec((err, totalData) => {
+          if(err) {
+            console.log(`Internal server error`);
+            console.log(err);
+            return res.status(500).json({ message: 'Internal server error' })
+          }
+
+          if(totalData === null) {
+            console.log(`Missing total data`);
+            console.log(err);
+            return res.status(500).json({ message: 'Internal server error' })
+          }
+
+          return res.status(200).json(totalData);
+        })
+    })
 
     app.listen(80);
     console.log('Listening on port 80');

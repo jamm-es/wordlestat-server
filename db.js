@@ -9,6 +9,7 @@ const cron = require('node-cron');
 const { spawn } = require('child_process');
 const RawData = require('./models/RawData');
 const WordleData = require('./models/WordleData');
+const TotalData = require('./models/TotalData');
 
 const credentials = require('./writer-credentials.json');
 
@@ -62,6 +63,8 @@ mongoose
         prevNewestId = responseJSON.newestId;
 
         const promises = [];
+
+        // RawData and WordleData
         for(const [wordleName, partialStats] of Object.entries(responseJSON.data)) {
           partialStats.wordleNumber = +wordleName.slice(7)
           WordleData
@@ -103,12 +106,40 @@ mongoose
             });
         }
 
+        // TotalData
+        TotalData
+          .findOne()
+          .exec((err, totalData) => {
+            if(err) return console.log(`Error finding for total data: ${err}`);
+
+            for(const [_, partialStats] of Object.entries(responseJSON.data)) {
+              totalData.total += partialStats.total;
+              totalData.wins = totalData.wins.map((d, i) => d + partialStats.wins[i]);
+              totalData.byRow = totalData.byRow.map((d, i) => ({
+                correct: d.correct + partialStats.byRow[i].correct,
+                wrongPlace: d.wrongPlace + partialStats.byRow[i].wrongPlace,
+                wrongLetter: d.wrongLetter + partialStats.byRow[i].wrongLetter,
+                total: d.total + partialStats.byRow[i].total,
+              }));
+              totalData.byLetter = totalData.byLetter.map((a, i) => a.map((d, j) => ({
+                correct: d.correct + partialStats.byLetter[i][j].correct,
+                wrongPlace: d.wrongPlace + partialStats.byLetter[i][j].wrongPlace,
+                wrongLetter: d.wrongLetter + partialStats.byLetter[i][j].wrongLetter,
+                total: d.total + partialStats.byLetter[i][j].total,
+              })));
+            }
+
+            promises.push(totalData.save());
+          });
+        
+
         Promise.all(promises)
           .then(() => {
             inProgress = false;
             console.log('Saved all data');
           })
           .catch(err => {
+            inProgress = false;
             console.log(`Error saving data: ${err}`);
           });
       });
