@@ -13,6 +13,10 @@ const TotalData = require('./models/TotalData');
 
 const credentials = require('./writer-credentials.json');
 
+// prevents "ReferenceError: TextEncoder is not defined" - first appeared around 3/17/2022
+global.TextEncoder = require("util").TextEncoder;
+global.TextDecoder = require("util").TextDecoder;
+
 mongoose
   .connect(`mongodb://${credentials.host}:${credentials.port}/${credentials.db}`, {
     useNewUrlParser: true,
